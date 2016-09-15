@@ -1,0 +1,17 @@
+actions:
+    index:
+        route: 'sudo_wh_superadmin_menuitem_index'
+        parameters:
+            - menu.id
+    order:
+        route: 'sudo_wh_superadmin_menuitem_order'
+        parameters:
+            - menu.id
+    create:
+        route: 'sudo_wh_superadmin_menuitem_create'
+        parameters:
+            - menu.id
+    update:
+        route: 'sudo_wh_superadmin_menuitem_update'
+        parameters:
+            - id

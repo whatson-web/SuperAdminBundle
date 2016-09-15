@@ -1,0 +1,23 @@
+title: 'Créer un item de menu'
+
+formFields:
+    name:
+        label: 'Nom'
+        field: 'name'
+        type: 'text'
+    route:
+        label: 'Route'
+        field: 'route'
+        type: 'text'
+    parent:
+        label: 'Parent'
+        field: 'parent'
+        type: 'entity'
+        class: 'WHSuperAdminBundle:MenuItem'
+        choice_label: 'indentedName'
+
+footerFormFields:
+    create:
+        label: 'Créer'
+        field: 'create'
+        color: 'success'

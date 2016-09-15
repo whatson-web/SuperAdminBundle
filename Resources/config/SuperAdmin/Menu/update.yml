@@ -1,0 +1,15 @@
+modal: 'true'
+
+title: 'Editer un menu'
+
+formFields:
+    name:
+        label: 'Nom'
+        field: 'name'
+        type: 'text'
+
+footerFormFields:
+    save:
+        label: 'Enregistrer'
+        field: 'save'
+        color: 'success'

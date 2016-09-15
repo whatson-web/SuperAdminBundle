@@ -1,0 +1,36 @@
+tree: 'true'
+
+title: 'Liste des items du menu'
+
+breadcrumb:
+    index:
+        label: 'Liste des items du menu'
+        action: 'index'
+
+tablePanelProperties:
+    headerLabel: 'Liste des items du menu'
+    headerListButtons:
+        create:
+            buttonType: 'link'
+            color: 'success'
+            label: 'Ajouter un item de menu'
+            action: 'create'
+            modal: 'true'
+            size: 'xs'
+    tableFields:
+        buttons:
+            update:
+                icon: 'pencil'
+                modal: 'true'
+                route: 'sudo_wh_superadmin_menuitem_update'
+                routeParams:
+                    id: 'id'
+            delete:
+                icon: 'trash'
+                color: 'danger'
+                route: 'sudo_wh_superadmin_menuitem_delete'
+                routeParams:
+                    id: 'id'
+                confirm: 'Êtes-vous sûr de vouloir supprimer ce menu ?'
+        id: 'ID'
+        name: 'Nom'

@@ -1,0 +1,9 @@
+actions:
+    index:
+        route: 'sudo_wh_superadmin_menu_index'
+    create:
+        route: 'sudo_wh_superadmin_menu_create'
+    update:
+        route: 'sudo_wh_superadmin_menu_update'
+        parameters:
+            - id

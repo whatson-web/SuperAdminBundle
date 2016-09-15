@@ -1,0 +1,13 @@
+title: 'Créer un menu'
+
+formFields:
+    name:
+        label: 'Nom'
+        field: 'name'
+        type: 'text'
+
+footerFormFields:
+    create:
+        label: 'Créer'
+        field: 'create'
+        color: 'success'
