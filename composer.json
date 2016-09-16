@@ -1,0 +1,16 @@
+{
+  "name": "whatson-web/super-admin-bundle",
+  "type": "symfony-bundle",
+  "description": "Symfony - Whatson Web - SuperAdminBundle",
+  "homepage": "https://github.com/whatson-web/SuperAdminBundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jean-François Thuillier",
+      "email": "jf@whatson-web.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.9"
+  }
+}
