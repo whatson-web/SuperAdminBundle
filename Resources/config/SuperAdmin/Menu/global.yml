@@ -7,3 +7,7 @@ actions:
         route: 'sudo_wh_superadmin_menu_update'
         parameters:
             - id
+
+menus:
+    main: 'menu-superadmin'
+    right: 'menu-superadmin-right'

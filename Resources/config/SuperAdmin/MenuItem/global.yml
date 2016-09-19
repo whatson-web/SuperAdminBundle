@@ -15,3 +15,7 @@ actions:
         route: 'sudo_wh_superadmin_menuitem_update'
         parameters:
             - id
+
+menus:
+    main: 'menu-superadmin'
+    right: 'menu-superadmin-right'

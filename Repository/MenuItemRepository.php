@@ -22,7 +22,7 @@ class MenuItemRepository extends BaseRepository
 			->createQueryBuilder('menuItem')
 			->addSelect('menu')
 			->addSelect('parent')
-			->innerJoin('menuItem.menu', 'menu')
+            ->innerJoin('menuItem.menu', 'menu')
 			->leftJoin('menuItem.parent', 'parent')
 			->orderBy('menuItem.lft', 'ASC');
 	}

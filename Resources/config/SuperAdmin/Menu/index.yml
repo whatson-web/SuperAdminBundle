@@ -37,3 +37,4 @@ tablePanelProperties:
                     menuId: 'id'
         id: 'ID'
         name: 'Nom'
+        slug: 'Slug'

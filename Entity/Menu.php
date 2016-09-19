@@ -14,141 +14,141 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Menu
 {
 
-	/**
-	 * @var int
-	 *
-	 * @ORM\Column(name="id", type="integer")
-	 * @ORM\Id
-	 * @ORM\GeneratedValue(strategy="AUTO")
-	 */
-	private $id;
+    /**
+     * Menu constructor.
+     */
+    public function __construct()
+    {
 
-	/**
-	 * @var string
-	 *
-	 * @ORM\Column(name="name", type="string", length=255)
-	 */
-	private $name;
+        $this->menuItems = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
-	/**
-	 * @var string
-	 *
-	 * @Gedmo\Slug(fields={"name"})
-	 * @ORM\Column(name="slug", type="string", length=255, unique=true)
-	 */
-	private $slug;
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
 
-	/**
-	 * @ORM\OneToMany(targetEntity="MenuItem", mappedBy="menu")
-	 */
-	private $menuItems;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255)
+     */
+    private $name;
 
-	/**
-	 * Get id
-	 *
-	 * @return int
-	 */
-	public function getId()
-	{
+    /**
+     * @var string
+     *
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     */
+    private $slug;
 
-		return $this->id;
-	}
+    /**
+     * @ORM\OneToMany(targetEntity="MenuItem", mappedBy="menu")
+     */
+    private $menuItems;
 
-	/**
-	 * Set name
-	 *
-	 * @param string $name
-	 *
-	 * @return Menu
-	 */
-	public function setName($name)
-	{
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
 
-		$this->name = $name;
+        return $this->id;
+    }
 
-		return $this;
-	}
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Menu
+     */
+    public function setName($name)
+    {
 
-	/**
-	 * Get name
-	 *
-	 * @return string
-	 */
-	public function getName()
-	{
+        $this->name = $name;
 
-		return $this->name;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set slug
-	 *
-	 * @param string $slug
-	 *
-	 * @return Menu
-	 */
-	public function setSlug($slug)
-	{
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
 
-		$this->slug = $slug;
+        return $this->name;
+    }
 
-		return $this;
-	}
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return Menu
+     */
+    public function setSlug($slug)
+    {
 
-	/**
-	 * Get slug
-	 *
-	 * @return string
-	 */
-	public function getSlug()
-	{
+        $this->slug = $slug;
 
-		return $this->slug;
-	}
+        return $this;
+    }
 
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
 
-		$this->menuItems = new \Doctrine\Common\Collections\ArrayCollection();
-	}
+        return $this->slug;
+    }
 
-	/**
-	 * Add menuItem
-	 *
-	 * @param \WH\SuperAdminBundle\Entity\MenuItem $menuItem
-	 *
-	 * @return Menu
-	 */
-	public function addMenuItem(\WH\SuperAdminBundle\Entity\MenuItem $menuItem)
-	{
+    /**
+     * Add menuItem
+     *
+     * @param \WH\SuperAdminBundle\Entity\MenuItem $menuItem
+     *
+     * @return Menu
+     */
+    public function addMenuItem(\WH\SuperAdminBundle\Entity\MenuItem $menuItem)
+    {
 
-		$this->menuItems[] = $menuItem;
+        $this->menuItems[] = $menuItem;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Remove menuItem
-	 *
-	 * @param \WH\SuperAdminBundle\Entity\MenuItem $menuItem
-	 */
-	public function removeMenuItem(\WH\SuperAdminBundle\Entity\MenuItem $menuItem)
-	{
+    /**
+     * Remove menuItem
+     *
+     * @param \WH\SuperAdminBundle\Entity\MenuItem $menuItem
+     */
+    public function removeMenuItem(\WH\SuperAdminBundle\Entity\MenuItem $menuItem)
+    {
 
-		$this->menuItems->removeElement($menuItem);
-	}
+        $this->menuItems->removeElement($menuItem);
+    }
 
-	/**
-	 * Get menuItems
-	 *
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function getMenuItems()
-	{
+    /**
+     * Get menuItems
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMenuItems()
+    {
 
-		return $this->menuItems;
-	}
+        return $this->menuItems;
+    }
 }
