@@ -8,6 +8,7 @@ breadcrumb:
         action: 'index'
 
 tablePanelProperties:
+
     headerLabel: 'Liste des items du menu'
     headerListButtons:
         create:
@@ -17,20 +18,17 @@ tablePanelProperties:
             action: 'create'
             modal: 'true'
             size: 'xs'
+
     tableFields:
         buttons:
             update:
                 icon: 'pencil'
                 modal: 'true'
-                route: 'sudo_wh_superadmin_menuitem_update'
-                routeParams:
-                    id: 'id'
+                action: 'update'
             delete:
                 icon: 'trash'
                 color: 'danger'
-                route: 'sudo_wh_superadmin_menuitem_delete'
-                routeParams:
-                    id: 'id'
+                action: 'delete'
                 confirm: 'Êtes-vous sûr de vouloir supprimer ce menu ?'
-        id: 'ID'
-        name: 'Nom'
+        id:
+        name:

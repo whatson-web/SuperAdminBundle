@@ -6,7 +6,21 @@ actions:
     update:
         route: 'sudo_wh_superadmin_menu_update'
         parameters:
-            - id
+            id: 'id'
+    delete:
+        route: 'sudo_wh_superadmin_menu_delete'
+        parameters:
+            id: 'id'
+    menuItem.index:
+        route: 'sudo_wh_superadmin_menuitem_index'
+        parameters:
+            menuId: 'id'
+
+formFields:
+    name:
+        label: 'Nom'
+        field: 'name'
+        type: 'text'
 
 menus:
     main: 'menu-superadmin'
