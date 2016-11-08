@@ -23,5 +23,5 @@ formFields:
         type: 'text'
 
 menus:
-    main: 'menu-superadmin'
-    right: 'menu-superadmin-right'
+    main: 'super-admin-menu'
+    right: 'super-admin-menu-right'

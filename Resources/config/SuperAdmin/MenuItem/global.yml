@@ -37,5 +37,5 @@ formFields:
         choice_label: 'indentedName'
 
 menus:
-    main: 'menu-superadmin'
-    right: 'menu-superadmin-right'
+    main: 'super-admin-menu'
+    right: 'super-admin-menu-right'

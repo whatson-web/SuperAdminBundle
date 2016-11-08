@@ -21,6 +21,7 @@ tablePanelProperties:
 
     tableFields:
         buttons:
+            multipleFields:
             update:
                 icon: 'pencil'
                 modal: 'true'

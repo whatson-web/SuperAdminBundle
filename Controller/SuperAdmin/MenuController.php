@@ -19,6 +19,7 @@ class MenuController extends BaseController
     public $bundlePrefix = 'WH';
     public $bundle = 'SuperAdminBundle';
     public $entity = 'Menu';
+	public $type = 'SuperAdmin';
 
     /**
      * @Route("/index/", name="sudo_wh_superadmin_menu_index")
