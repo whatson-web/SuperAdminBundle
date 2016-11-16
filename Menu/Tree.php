@@ -159,7 +159,7 @@ class Tree implements ContainerAwareInterface
 
         $menuClass = 'nav navbar-nav';
         if (!empty($options['menuRight'])) {
-            $menuClass = 'navbar-right';
+            $menuClass .= ' navbar-right';
         }
         $menu = $factory->createItem(
             'root',
