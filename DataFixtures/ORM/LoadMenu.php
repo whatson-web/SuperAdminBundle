@@ -7,12 +7,19 @@ use Doctrine\Common\Persistence\ObjectManager;
 use WH\SuperAdminBundle\Entity\Menu;
 use WH\SuperAdminBundle\Entity\MenuItem;
 
+/**
+ * Class LoadMenu
+ *
+ * @package WH\SuperAdminBundle\Controller\DataFixtures\ORM
+ */
 class LoadMenu implements FixtureInterface
 {
 
+	/**
+	 * @param ObjectManager $manager
+	 */
 	public function load(ObjectManager $manager)
 	{
-		// Les noms d'utilisateurs à créer
 		$listMenus = array(
 			array(
 				'name'      => 'Super Admin Menu',
@@ -38,6 +45,10 @@ class LoadMenu implements FixtureInterface
 							),
 						),
 					),
+					array(
+						'name'  => 'Commandes',
+						'route' => 'sudo_wh_superadmin_command_list',
+					),
 				),
 			),
 			array(
@@ -58,7 +69,7 @@ class LoadMenu implements FixtureInterface
 					),
 					array(
 						'name'  => 'Pages',
-						'route' => '',
+						'route' => 'bk_wh_cms_page_index',
 					),
 					array(
 						'name'  => 'Actualités',

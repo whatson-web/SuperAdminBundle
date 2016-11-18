@@ -1,0 +1,55 @@
+{% extends '@WHBackendTemplate/BackendTemplate/Layout/layout.html.twig' %}
+
+{% block body %}
+
+    <div class="wh-panel panel panel-default">
+
+        <div class="panel-heading">
+
+            <table>
+                <tbody>
+                <tr>
+                    <td>
+                        <span>Liste des commandes</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-body">
+
+            <table class="wh-table table table-striped">
+
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for commandSlug, command in commands %}
+                    <tr>
+                        <td>
+                            <ul class="wh-list-buttons">
+                                <li>
+                                    <a href="{{ path('sudo_wh_superadmin_command_execute', {'commandSlug' : commandSlug}) }}"
+                                       class="btn btn-primary btn-xs">
+                                        <i class="fa fa-rocket"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </td>
+                        <td>{{ command.title }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+{% endblock %}

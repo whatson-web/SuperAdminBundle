@@ -3,6 +3,7 @@ actions:
         route: 'sudo_wh_superadmin_menuitem_index'
         parameters:
             menuId: 'menu.id'
+            parentId: 'parent.id'
     order:
         route: 'sudo_wh_superadmin_menuitem_order'
         parameters:

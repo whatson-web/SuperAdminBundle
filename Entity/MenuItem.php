@@ -25,7 +25,6 @@ class MenuItem
      */
     public function __construct()
     {
-
         $this->children = new ArrayCollection();
     }
 

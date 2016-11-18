@@ -15,246 +15,264 @@ use WH\SuperAdminBundle\Entity\MenuItem;
 class Tree implements ContainerAwareInterface
 {
 
-    use ContainerAwareTrait;
+	use ContainerAwareTrait;
 
-    private $config = array();
+	private $indexController;
 
-    /**
-     * @param FactoryInterface $factory
-     * @param array            $options
-     *
-     * @return \Knp\Menu\ItemInterface
-     */
-    public function tree(FactoryInterface $factory, array $options = array())
-    {
+	private $config = array();
+	private $entityPathConfig = array();
+	private $urlData = array();
 
-        $baseController = $this->container->get('bk.wh.back.base_controller');
+	/**
+	 * @param FactoryInterface $factory
+	 * @param array            $options
+	 *
+	 * @return \Knp\Menu\ItemInterface
+	 */
+	public function tree(FactoryInterface $factory, array $options = array())
+	{
+		$this->indexController = $this->container->get('bk.wh.back.index_controller');
 
-        $entityRepository = $this->container->get('doctrine')->getRepository(
-            $baseController->getRepositoryName($options['entityPathConfig'])
-        );
+		$this->urlData = (isset($options['urlData'])) ? $options['urlData'] : array();
 
-        // TODO : Trouver une meilleure méthode pour les conditions
-        // Penser au cas où il peut y avoir plusieurs arguments "communs"
-        $conditions = array();
-        if (!empty($options['urlData'])) {
+		$this->entityPathConfig = $options['entityPathConfig'];
 
-            $keys = array_keys($options['urlData']);
-            $conditions = array(
-                $keys[0] => $options['urlData'][$keys[0]],
-            );
-        }
-        $entities = $entityRepository->get(
-            'all',
-            array(
-                'conditions' => $conditions,
-            )
-        );
+		$this->config = $this->indexController->getConfig(
+			$this->entityPathConfig,
+			'index'
+		);
 
-        $indexController = $this->container->get('bk.wh.back.index_controller');
+		$entityRepository = $this->container->get('doctrine')->getRepository(
+			$this->indexController->getRepositoryName($this->entityPathConfig)
+		);
 
-        $this->config = $indexController->getConfig(
-            $options['entityPathConfig'],
-            'index'
-        );
+		// TODO : Trouver une meilleure méthode pour les conditions
+		// Penser au cas où il peut y avoir plusieurs arguments "communs"
+		$conditions = array();
+		if (!empty($this->urlData)) {
 
-        $menu = $factory->createItem(
-            'root'
-        );
+			$keys = array_keys($this->urlData);
+			$conditions = array(
+				$keys[0] => $this->urlData[$keys[0]],
+			);
+		}
+		unset($conditions['parent.id']);
+		$entities = $entityRepository->get(
+			'all',
+			array(
+				'conditions' => $conditions,
+			)
+		);
 
-        $menu->addChild(
-            'root',
-            array(
-                'label' => 'Racine',
-                'uri'   => $indexController->getActionUrl(
-                    $options['entityPathConfig'],
-                    'index',
-                    (isset($options['urlData'])) ? $options['urlData'] : array()
-                ),
-            )
-        );
+		$menu = $factory->createItem(
+			'root'
+		);
 
-        foreach ($entities as $entity) {
+		$data = array_merge(
+			$this->urlData,
+			array(
+				'parent.id' => null,
+			)
+		);
+		$menu->addChild(
+			'root',
+			array(
+				'label' => 'Racine',
+				'uri'   => $this->indexController->getActionUrl(
+					$this->entityPathConfig,
+					'index',
+					$data
+				),
+			)
+		);
 
-            if ($entity->getLvl() == 0) {
+		foreach ($entities as $entity) {
 
-                $menu['root']->addChild(
-                    $entity->getId(),
-                    $this->getNodeTree($entity)
-                );
+			if ($entity->getLvl() == 0) {
 
-                if (count($entity->getChildren()) > 0) {
+				$menu['root']->addChild(
+					$entity->getId(),
+					$this->getNodeTree($entity)
+				);
 
-                    $this->treeChildren($menu['root'], $entity->getId(), $entity->getChildren());
-                }
-            }
-        }
+				if (count($entity->getChildren()) > 0) {
 
-        return $menu;
-    }
+					$this->treeChildren($menu['root'], $entity->getId(), $entity->getChildren());
+				}
+			}
+		}
 
-    /**
-     * @param $node
-     * @param $slug
-     * @param $entities
-     *
-     * @return mixed
-     */
-    private function treeChildren($node, $slug, $entities)
-    {
+		return $menu;
+	}
 
-        foreach ($entities as $entity) {
+	/**
+	 * @param $node
+	 * @param $slug
+	 * @param $entities
+	 *
+	 * @return mixed
+	 */
+	private function treeChildren($node, $slug, $entities)
+	{
 
-            $node[$slug]->addChild(
-                $entity->getId(),
-                $this->getNodeTree($entity)
-            );
+		foreach ($entities as $entity) {
 
-            if (count($entity->getChildren()) > 0) {
+			$node[$slug]->addChild(
+				$entity->getId(),
+				$this->getNodeTree($entity)
+			);
 
-                $this->treeChildren($node[$slug], $entity->getId(), $entity->getChildren());
-            }
-        }
+			if (count($entity->getChildren()) > 0) {
 
-        return $node;
-    }
+				$this->treeChildren($node[$slug], $entity->getId(), $entity->getChildren());
+			}
+		}
 
-    /**
-     * @param $entity
-     *
-     * @return array
-     */
-    private function getNodeTree($entity)
-    {
+		return $node;
+	}
 
-        return array(
-            'route'           => 'sudo_wh_superadmin_menuitem_index',
-            'routeParameters' => array(
-                'menuId'   => $entity->getMenu()->getId(),
-                'parentId' => $entity->getId(),
-            ),
-            'label'           => $entity->getName(),
-        );
-    }
+	/**
+	 * @param $entity
+	 *
+	 * @return array
+	 */
+	private function getNodeTree($entity)
+	{
+		$data = array_merge(
+			$this->urlData,
+			array(
+				'parent.id' => $entity->getId(),
+			)
+		);
 
-    /**
-     * @param FactoryInterface $factory
-     * @param array            $options
-     *
-     * @return \Knp\Menu\ItemInterface
-     */
-    public function menu(FactoryInterface $factory, array $options = array())
-    {
+		return array(
+			'uri'   => $this->indexController->getActionUrl(
+				$this->entityPathConfig,
+				'index',
+				$data
+			),
+			'label' => $entity->getName(),
+		);
+	}
 
-        $menuItemRepository = $this->container->get('doctrine')->getRepository('WHSuperAdminBundle:MenuItem');
+	/**
+	 * @param FactoryInterface $factory
+	 * @param array            $options
+	 *
+	 * @return \Knp\Menu\ItemInterface
+	 */
+	public function menu(FactoryInterface $factory, array $options = array())
+	{
 
-        $menuItems = $menuItemRepository->get(
-            'all',
-            array(
-                'conditions' => array(
-                    'menu.slug' => $options['menuSlug'],
-                ),
-            )
-        );
+		$menuItemRepository = $this->container->get('doctrine')->getRepository('WHSuperAdminBundle:MenuItem');
 
-        $menuClass = 'nav navbar-nav';
-        if (!empty($options['menuRight'])) {
-            $menuClass .= ' navbar-right';
-        }
-        $menu = $factory->createItem(
-            'root',
-            array(
-                'childrenAttributes' => array(
-                    'class' => $menuClass,
-                ),
-            )
-        );
+		$menuItems = $menuItemRepository->get(
+			'all',
+			array(
+				'conditions' => array(
+					'menu.slug' => $options['menuSlug'],
+				),
+			)
+		);
 
-        foreach ($menuItems as $menuItem) {
+		$menuClass = 'nav navbar-nav';
+		if (!empty($options['menuRight'])) {
+			$menuClass .= ' navbar-right';
+		}
+		$menu = $factory->createItem(
+			'root',
+			array(
+				'childrenAttributes' => array(
+					'class' => $menuClass,
+				),
+			)
+		);
 
-            if ($menuItem->getLvl() == 0) {
+		foreach ($menuItems as $menuItem) {
 
-                $menu->addChild(
-                    $menuItem->getId(),
-                    $this->getNodeMenu($menuItem)
-                );
+			if ($menuItem->getLvl() == 0) {
 
-                if (count($menuItem->getChildren()) > 0) {
+				$menu->addChild(
+					$menuItem->getId(),
+					$this->getNodeMenu($menuItem)
+				);
 
-                    $this->menuChildren($menu, $menuItem->getId(), $menuItem->getChildren());
-                }
-            }
-        }
+				if (count($menuItem->getChildren()) > 0) {
 
-        return $menu;
-    }
+					$this->menuChildren($menu, $menuItem->getId(), $menuItem->getChildren());
+				}
+			}
+		}
 
-    /**
-     * @param $node
-     * @param $slug
-     * @param $entities
-     *
-     * @return mixed
-     */
-    private function menuChildren($node, $slug, $entities)
-    {
+		return $menu;
+	}
 
-        foreach ($entities as $entity) {
+	/**
+	 * @param $node
+	 * @param $slug
+	 * @param $entities
+	 *
+	 * @return mixed
+	 */
+	private function menuChildren($node, $slug, $entities)
+	{
 
-            $node[$slug]->addChild(
-                $entity->getId(),
-                $this->getNodeMenu($entity)
-            );
+		foreach ($entities as $entity) {
 
-            if (count($entity->getChildren()) > 0) {
+			$node[$slug]->addChild(
+				$entity->getId(),
+				$this->getNodeMenu($entity)
+			);
 
-                $this->menuChildren($node[$slug], $entity->getId(), $entity->getChildren());
-            }
-        }
+			if (count($entity->getChildren()) > 0) {
 
-        return $node;
-    }
+				$this->menuChildren($node[$slug], $entity->getId(), $entity->getChildren());
+			}
+		}
 
-    /**
-     * @param MenuItem $menuItem
-     *
-     * @return array
-     */
-    private function getNodeMenu(MenuItem $menuItem)
-    {
+		return $node;
+	}
 
-        $nodeInfos = array(
-            'label' => $menuItem->getName(),
-        );
+	/**
+	 * @param MenuItem $menuItem
+	 *
+	 * @return array
+	 */
+	private function getNodeMenu(MenuItem $menuItem)
+	{
 
-        if ($menuItem->getRoute()) {
+		$nodeInfos = array(
+			'label' => $menuItem->getName(),
+		);
 
-            $nodeInfos['route'] = $menuItem->getRoute();
-        } else {
+		if ($menuItem->getRoute()) {
 
-            $nodeInfos['uri'] = '#';
-        }
+			$nodeInfos['route'] = $menuItem->getRoute();
+		} else {
 
-        if (count($menuItem->getChildren()) > 0) {
+			$nodeInfos['uri'] = '#';
+		}
 
-            $nodeInfos['extras'] = array(
-                'safe_label' => true,
-            );
-            $nodeInfos['label'] .= ' <span class="caret"></span>';
+		if (count($menuItem->getChildren()) > 0) {
 
-            $nodeInfos['childrenAttributes'] = array(
-                'class' => 'dropdown-menu',
-            );
-            $nodeInfos['attributes'] = array(
-                'class' => 'dropdown',
-            );
-            $nodeInfos['linkAttributes'] = array(
-                'class'       => 'dropdown-toggle',
-                'data-toggle' => 'dropdown',
-            );
-        }
+			$nodeInfos['extras'] = array(
+				'safe_label' => true,
+			);
+			$nodeInfos['label'] .= ' <span class="caret"></span>';
 
-        return $nodeInfos;
-    }
+			$nodeInfos['childrenAttributes'] = array(
+				'class' => 'dropdown-menu',
+			);
+			$nodeInfos['attributes'] = array(
+				'class' => 'dropdown',
+			);
+			$nodeInfos['linkAttributes'] = array(
+				'class'       => 'dropdown-toggle',
+				'data-toggle' => 'dropdown',
+			);
+		}
+
+		return $nodeInfos;
+	}
 
 }
