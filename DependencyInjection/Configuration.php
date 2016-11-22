@@ -12,18 +12,40 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+
+	/**
+	 * @return mixed
+	 */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('wh_super_admin');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
-
-        return $treeBuilder;
+	    return $treeBuilder
+		    ->root('wh_super_admin', 'array')
+			    ->children()
+				    ->arrayNode('menus')
+					    ->prototype('array')
+						    ->children()
+							    ->arrayNode('menuItems')
+		                            ->prototype('array')
+			                            ->children()
+										    ->scalarNode('name')->end()
+										    ->scalarNode('route')->end()
+										    ->arrayNode('children')
+											    ->prototype('array')
+												    ->children()
+												        ->scalarNode('name')->end()
+												        ->scalarNode('route')->end()
+												    ->end()
+											    ->end()
+										    ->end()
+									    ->end()
+		                            ->end()
+							    ->end()
+						    ->end()
+					    ->end()
+				    ->end()
+			    ->end()
+		    ->end();
     }
 }

@@ -163,17 +163,10 @@ class Tree implements ContainerAwareInterface
 	 */
 	public function menu(FactoryInterface $factory, array $options = array())
 	{
+		$menus = $this->container->getParameter('wh_super_admin_menus');
 
-		$menuItemRepository = $this->container->get('doctrine')->getRepository('WHSuperAdminBundle:MenuItem');
-
-		$menuItems = $menuItemRepository->get(
-			'all',
-			array(
-				'conditions' => array(
-					'menu.slug' => $options['menuSlug'],
-				),
-			)
-		);
+		$options['menuSlug'] = str_replace('-', '_', $options['menuSlug']);
+		$menuItems = $menus[$options['menuSlug']]['menuItems'];
 
 		$menuClass = 'nav navbar-nav';
 		if (!empty($options['menuRight'])) {
@@ -188,19 +181,14 @@ class Tree implements ContainerAwareInterface
 			)
 		);
 
-		foreach ($menuItems as $menuItem) {
+		foreach ($menuItems as $menuItemSlug => $menuItem) {
+			$menu->addChild(
+				$menuItemSlug,
+				$this->getNodeMenu($menuItem)
+			);
 
-			if ($menuItem->getLvl() == 0) {
-
-				$menu->addChild(
-					$menuItem->getId(),
-					$this->getNodeMenu($menuItem)
-				);
-
-				if (count($menuItem->getChildren()) > 0) {
-
-					$this->menuChildren($menu, $menuItem->getId(), $menuItem->getChildren());
-				}
+			if (isset($menuItem['children']) && count($menuItem['children']) > 0) {
+				$this->menuChildren($menu, $menuItemSlug, $menuItem['children']);
 			}
 		}
 
@@ -210,23 +198,22 @@ class Tree implements ContainerAwareInterface
 	/**
 	 * @param $node
 	 * @param $slug
-	 * @param $entities
+	 * @param $menuItems
 	 *
 	 * @return mixed
 	 */
-	private function menuChildren($node, $slug, $entities)
+	private function menuChildren($node, $slug, $menuItems)
 	{
 
-		foreach ($entities as $entity) {
+		foreach ($menuItems as $menuItemSlug => $menuItem) {
 
 			$node[$slug]->addChild(
-				$entity->getId(),
-				$this->getNodeMenu($entity)
+				$menuItemSlug,
+				$this->getNodeMenu($menuItem)
 			);
 
-			if (count($entity->getChildren()) > 0) {
-
-				$this->menuChildren($node[$slug], $entity->getId(), $entity->getChildren());
+			if (isset($menuItem['children']) && count($menuItem['children']) > 0) {
+				$this->menuChildren($node[$menuItemSlug], $menuItemSlug, $$menuItem['children']);
 			}
 		}
 
@@ -234,26 +221,25 @@ class Tree implements ContainerAwareInterface
 	}
 
 	/**
-	 * @param MenuItem $menuItem
+	 * @param $menuItem
 	 *
 	 * @return array
 	 */
-	private function getNodeMenu(MenuItem $menuItem)
+	private function getNodeMenu($menuItem)
 	{
-
 		$nodeInfos = array(
-			'label' => $menuItem->getName(),
+			'label' => $menuItem['name'],
 		);
 
-		if ($menuItem->getRoute()) {
+		if (!empty($menuItem['route'])) {
 
-			$nodeInfos['route'] = $menuItem->getRoute();
+			$nodeInfos['route'] = $menuItem['route'];
 		} else {
 
 			$nodeInfos['uri'] = '#';
 		}
 
-		if (count($menuItem->getChildren()) > 0) {
+		if (isset($menuItem['children']) && count($menuItem['children']) > 0) {
 
 			$nodeInfos['extras'] = array(
 				'safe_label' => true,

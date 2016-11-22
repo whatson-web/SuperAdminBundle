@@ -22,7 +22,10 @@ class WHSuperAdminExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+	    $menus = $config['menus'];
+	    $container->setParameter('wh_super_admin_menus', $menus);
+
+	    $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
 }
