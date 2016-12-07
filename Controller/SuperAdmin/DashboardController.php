@@ -35,7 +35,7 @@ class DashboardController extends Controller
 	}
 
 	/**
-	 * @Route("/admin/", name="sudo_wh_dashboard")
+	 * @Route("/sudo/", name="sudo_wh_dashboard")
 	 *
 	 * @return Response
 	 */
