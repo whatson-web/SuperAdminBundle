@@ -25,8 +25,8 @@ class CommandController extends Controller
 	 */
 	private $globalConfig = array(
 		'menus' => array(
-			'main'  => 'super-admin-menu',
-			'right' => 'super-admin-menu-right',
+			'main'  => 'superAdminMenu',
+			'right' => 'superAdminMenuRight',
 		),
 	);
 

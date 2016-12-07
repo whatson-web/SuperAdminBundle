@@ -19,33 +19,8 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
+	    $rootNode = $treeBuilder->root('wh_super_admin');
 
-	    return $treeBuilder
-		    ->root('wh_super_admin', 'array')
-			    ->children()
-				    ->arrayNode('menus')
-					    ->prototype('array')
-						    ->children()
-							    ->arrayNode('menuItems')
-		                            ->prototype('array')
-			                            ->children()
-										    ->scalarNode('name')->end()
-										    ->scalarNode('route')->end()
-										    ->arrayNode('children')
-											    ->prototype('array')
-												    ->children()
-												        ->scalarNode('name')->end()
-												        ->scalarNode('route')->end()
-												    ->end()
-											    ->end()
-										    ->end()
-									    ->end()
-		                            ->end()
-							    ->end()
-						    ->end()
-					    ->end()
-				    ->end()
-			    ->end()
-		    ->end();
+	    return $treeBuilder;
     }
 }

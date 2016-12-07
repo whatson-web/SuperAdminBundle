@@ -26,8 +26,8 @@ class DashboardController extends Controller
 			array(
 				'globalConfig' => array(
 					'menus' => array(
-						'main'  => 'backend-menu',
-						'right' => 'backend-menu-right',
+						'main'  => 'backendMenu',
+						'right' => 'backendMenuRight',
 					),
 				),
 			)
@@ -46,8 +46,8 @@ class DashboardController extends Controller
 			array(
 				'globalConfig' => array(
 					'menus' => array(
-						'main'  => 'super-admin-menu',
-						'right' => 'super-admin-menu-right',
+						'main'  => 'superAdminMenu',
+						'right' => 'superAdminMenuRight',
 					),
 				),
 			)
