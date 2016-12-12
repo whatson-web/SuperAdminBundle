@@ -77,7 +77,7 @@ class Tree implements ContainerAwareInterface
 		$menu->addChild(
 			'root',
 			array(
-				'label' => 'Racine',
+				'label' => 'Root',
 				'uri'   => $this->indexController->getActionUrl(
 					$this->entityPathConfig,
 					'index',
