@@ -74,10 +74,16 @@ class Tree implements ContainerAwareInterface
 				'parent.id' => null,
 			)
 		);
+
+		$rootLabel = 'Root';
+		if (isset($options['rootLabel'])) {
+			$rootLabel = $options['rootLabel'];
+		}
+
 		$menu->addChild(
 			'root',
 			array(
-				'label' => 'Root',
+				'label' => $rootLabel,
 				'uri'   => $this->indexController->getActionUrl(
 					$this->entityPathConfig,
 					'index',
