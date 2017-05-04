@@ -20,80 +20,80 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class CommandController extends Controller
 {
 
-	/**
-	 * @var array
-	 */
-	private $globalConfig = array(
-		'menus' => array(
-			'main'  => 'superAdminMenu',
-			'right' => 'superAdminMenuRight',
-		),
-	);
+    /**
+     * @var array
+     */
+    private $globalConfig = [
+        'menus' => [
+            'main'  => 'superAdminMenu',
+            'right' => 'superAdminMenuRight',
+        ],
+    ];
 
-	private $commands = array(
-		'clearCache' => array(
-			'title'      => 'Vider le cache',
-			'arrayInput' => array(
-				'command' => 'cache:clear',
-			),
-		),
-		'dbUpdate'   => array(
-			'title'      => 'Mettre à jour la base de données',
-			'arrayInput' => array(
-				'command' => 'doctrine:schema:update',
-				'--force' => true,
-			),
-		),
-	);
+    private $commands = [
+        'clearCache' => [
+            'title'      => 'Vider le cache',
+            'arrayInput' => [
+                'command' => 'cache:clear',
+            ],
+        ],
+        'dbUpdate'   => [
+            'title'      => 'Mettre à jour la base de données',
+            'arrayInput' => [
+                'command' => 'doctrine:schema:update',
+                '--force' => true,
+            ],
+        ],
+    ];
 
-	/**
-	 * @Route("/", name="sudo_wh_superadmin_command_list")
-	 *
-	 * @return Response
-	 */
-	public function listCommand()
-	{
-		return $this->render(
-			'@WHSuperAdmin/SuperAdmin/Command/list.html.twig',
-			array(
-				'commands'     => $this->commands,
-				'globalConfig' => $this->globalConfig,
-			)
-		);
-	}
+    /**
+     * @Route("/", name="sudo_wh_superadmin_command_list")
+     *
+     * @return Response
+     */
+    public function listCommand()
+    {
+        return $this->render(
+            '@WHSuperAdmin/SuperAdmin/Command/list.html.twig',
+            [
+                'commands'     => $this->commands,
+                'globalConfig' => $this->globalConfig,
+            ]
+        );
+    }
 
-	/**
-	 * @Route("/{commandSlug}", name="sudo_wh_superadmin_command_execute")
-	 *
-	 * @param $commandSlug
-	 *
-	 * @return Response
-	 */
-	public function executeCommand($commandSlug)
-	{
-		if (!isset($this->commands[$commandSlug])) {
-			throw new NotFoundHttpException('Commmande introuvable');
-		}
-		$command = $this->commands[$commandSlug];
+    /**
+     * @Route("/{commandSlug}", name="sudo_wh_superadmin_command_execute")
+     *
+     * @param $commandSlug
+     *
+     * @return Response
+     */
+    public function executeCommand($commandSlug)
+    {
+        if (!isset($this->commands[$commandSlug])) {
+            throw new NotFoundHttpException('Commmande introuvable');
+        }
+        $command = $this->commands[$commandSlug];
 
-		$kernel = $this->get('kernel');
-		$application = new Application($kernel);
-		$application->setAutoExit(false);
+        $kernel = $this->get('kernel');
+        $application = new Application($kernel);
+        $application->setAutoExit(false);
 
-		$input = new ArrayInput($command['arrayInput']);
-		$output = new BufferedOutput();
-		$application->run($input, $output);
+        $input = new ArrayInput($command['arrayInput']);
+        $output = new BufferedOutput();
+        $application->run($input, $output);
 
-		$result = $output->fetch();
+        $result = $output->fetch();
 
-		return $this->render(
-			'WHBackendTemplateBundle:BackendTemplate/View:command.html.twig',
-			array(
-				'title'        => $command['title'],
-				'content'      => $result,
-				'globalConfig' => $this->globalConfig,
-			)
-		);
-	}
+        return $this->render(
+            'WHBackendTemplateBundle:BackendTemplate/View:command.html.twig',
+            [
+                'title'        => $command['title'],
+                'content'      => $result,
+                'globalConfig' => $this->globalConfig,
+            ]
+        );
+    }
 
 }

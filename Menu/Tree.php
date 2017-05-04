@@ -15,150 +15,150 @@ use WH\SuperAdminBundle\Entity\MenuItem;
 class Tree implements ContainerAwareInterface
 {
 
-	use ContainerAwareTrait;
+    use ContainerAwareTrait;
 
-	private $indexController;
+    private $indexController;
 
-	private $config = array();
-	private $entityPathConfig = array();
-	private $urlData = array();
+    private $config = [];
+    private $entityPathConfig = [];
+    private $urlData = [];
 
-	/**
-	 * @param FactoryInterface $factory
-	 * @param array            $options
-	 *
-	 * @return \Knp\Menu\ItemInterface
-	 */
-	public function tree(FactoryInterface $factory, array $options = array())
-	{
-		$this->indexController = $this->container->get('bk.wh.back.index_controller');
+    /**
+     * @param FactoryInterface $factory
+     * @param array            $options
+     *
+     * @return \Knp\Menu\ItemInterface
+     */
+    public function tree(FactoryInterface $factory, array $options = [])
+    {
+        $this->indexController = $this->container->get('bk.wh.back.index_controller');
 
-		$this->urlData = (isset($options['urlData'])) ? $options['urlData'] : array();
+        $this->urlData = (isset($options['urlData'])) ? $options['urlData'] : [];
 
-		$this->entityPathConfig = $options['entityPathConfig'];
+        $this->entityPathConfig = $options['entityPathConfig'];
 
-		$this->config = $this->indexController->getConfig(
-			$this->entityPathConfig,
-			'index'
-		);
+        $this->config = $this->indexController->getConfig(
+            $this->entityPathConfig,
+            'index'
+        );
 
-		$entityRepository = $this->container->get('doctrine')->getRepository(
-			$this->indexController->getRepositoryName($this->entityPathConfig)
-		);
+        $entityRepository = $this->container->get('doctrine')->getRepository(
+            $this->indexController->getRepositoryName($this->entityPathConfig)
+        );
 
-		// TODO : Trouver une meilleure méthode pour les conditions
-		// Penser au cas où il peut y avoir plusieurs arguments "communs"
-		$conditions = array();
-		if (!empty($this->urlData)) {
+        // TODO : Trouver une meilleure méthode pour les conditions
+        // Penser au cas où il peut y avoir plusieurs arguments "communs"
+        $conditions = [];
+        if (!empty($this->urlData)) {
 
-			$keys = array_keys($this->urlData);
-			$conditions = array(
-				$keys[0] => $this->urlData[$keys[0]],
-			);
-		}
-		unset($conditions['parent.id']);
-		$entities = $entityRepository->get(
-			'all',
-			array(
-				'conditions' => $conditions,
-			)
-		);
+            $keys = array_keys($this->urlData);
+            $conditions = [
+                $keys[0] => $this->urlData[$keys[0]],
+            ];
+        }
+        unset($conditions['parent.id']);
+        $entities = $entityRepository->get(
+            'all',
+            [
+                'conditions' => $conditions,
+            ]
+        );
 
-		$menu = $factory->createItem(
-			'root'
-		);
+        $menu = $factory->createItem(
+            'root'
+        );
 
-		$data = array_merge(
-			$this->urlData,
-			array(
-				'parent.id' => null,
-			)
-		);
+        $data = array_merge(
+            $this->urlData,
+            [
+                'parent.id' => null,
+            ]
+        );
 
-		$rootLabel = 'Root';
-		if (isset($options['rootLabel'])) {
-			$rootLabel = $options['rootLabel'];
-		}
+        $rootLabel = 'Root';
+        if (isset($options['rootLabel'])) {
+            $rootLabel = $options['rootLabel'];
+        }
 
-		$menu->addChild(
-			'root',
-			array(
-				'label' => $rootLabel,
-				'uri'   => $this->indexController->getActionUrl(
-					$this->entityPathConfig,
-					'index',
-					$data
-				),
-			)
-		);
+        $menu->addChild(
+            'root',
+            [
+                'label' => $rootLabel,
+                'uri'   => $this->indexController->getActionUrl(
+                    $this->entityPathConfig,
+                    'index',
+                    $data
+                ),
+            ]
+        );
 
-		foreach ($entities as $entity) {
+        foreach ($entities as $entity) {
 
-			if ($entity->getLvl() == 0) {
+            if ($entity->getLvl() == 0) {
 
-				$menu['root']->addChild(
-					$entity->getId(),
-					$this->getNodeTree($entity)
-				);
+                $menu['root']->addChild(
+                    $entity->getId(),
+                    $this->getNodeTree($entity)
+                );
 
-				if (count($entity->getChildren()) > 0) {
+                if (count($entity->getChildren()) > 0) {
 
-					$this->treeChildren($menu['root'], $entity->getId(), $entity->getChildren());
-				}
-			}
-		}
+                    $this->treeChildren($menu['root'], $entity->getId(), $entity->getChildren());
+                }
+            }
+        }
 
-		return $menu;
-	}
+        return $menu;
+    }
 
-	/**
-	 * @param $node
-	 * @param $slug
-	 * @param $entities
-	 *
-	 * @return mixed
-	 */
-	private function treeChildren($node, $slug, $entities)
-	{
+    /**
+     * @param $node
+     * @param $slug
+     * @param $entities
+     *
+     * @return mixed
+     */
+    private function treeChildren($node, $slug, $entities)
+    {
 
-		foreach ($entities as $entity) {
+        foreach ($entities as $entity) {
 
-			$node[$slug]->addChild(
-				$entity->getId(),
-				$this->getNodeTree($entity)
-			);
+            $node[$slug]->addChild(
+                $entity->getId(),
+                $this->getNodeTree($entity)
+            );
 
-			if (count($entity->getChildren()) > 0) {
+            if (count($entity->getChildren()) > 0) {
 
-				$this->treeChildren($node[$slug], $entity->getId(), $entity->getChildren());
-			}
-		}
+                $this->treeChildren($node[$slug], $entity->getId(), $entity->getChildren());
+            }
+        }
 
-		return $node;
-	}
+        return $node;
+    }
 
-	/**
-	 * @param $entity
-	 *
-	 * @return array
-	 */
-	private function getNodeTree($entity)
-	{
-		$data = array_merge(
-			$this->urlData,
-			array(
-				'parent.id' => $entity->getId(),
-			)
-		);
+    /**
+     * @param $entity
+     *
+     * @return array
+     */
+    private function getNodeTree($entity)
+    {
+        $data = array_merge(
+            $this->urlData,
+            [
+                'parent.id' => $entity->getId(),
+            ]
+        );
 
-		return array(
-			'uri'   => $this->indexController->getActionUrl(
-				$this->entityPathConfig,
-				'index',
-				$data
-			),
-			'label' => $entity->getName(),
-		);
-	}
+        return [
+            'uri'   => $this->indexController->getActionUrl(
+                $this->entityPathConfig,
+                'index',
+                $data
+            ),
+            'label' => $entity->getName(),
+        ];
+    }
 
 }

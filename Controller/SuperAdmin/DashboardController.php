@@ -14,56 +14,56 @@ use Symfony\Component\HttpFoundation\Response;
 class DashboardController extends Controller
 {
 
-	/**
-	 * @Route("/admin/", name="bk_wh_dashboard")
-	 *
-	 * @return Response
-	 */
-	public function backDashboardAction()
-	{
-		$backendTranslator = $this->container->get('bk.wh.back.translator');
-		$backendTranslator->setDomain('WHSuperAdminBundle_Backend_Dashboard');
+    /**
+     * @Route("/admin/", name="bk_wh_dashboard")
+     *
+     * @return Response
+     */
+    public function backDashboardAction()
+    {
+        $backendTranslator = $this->container->get('bk.wh.back.translator');
+        $backendTranslator->setDomain('WHSuperAdminBundle_Backend_Dashboard');
 
-		$title = $backendTranslator->trans('Dashboard');
+        $title = $backendTranslator->trans('Dashboard');
 
-		return $this->render(
-			'@WHSuperAdmin/Backend/Dashboard/dashboard.html.twig',
-			array(
-				'title'        => $title,
-				'globalConfig' => array(
-					'menus' => array(
-						'main'  => 'backendMenu',
-						'right' => 'backendMenuRight',
-					),
-				),
-			)
-		);
-	}
+        return $this->render(
+            '@WHSuperAdmin/Backend/Dashboard/dashboard.html.twig',
+            [
+                'title'        => $title,
+                'globalConfig' => [
+                    'menus' => [
+                        'main'  => 'backendMenu',
+                        'right' => 'backendMenuRight',
+                    ],
+                ],
+            ]
+        );
+    }
 
-	/**
-	 * @Route("/sudo/", name="sudo_wh_dashboard")
-	 *
-	 * @return Response
-	 */
-	public function dashboardAction()
-	{
-		$backendTranslator = $this->container->get('bk.wh.back.translator');
-		$backendTranslator->setDomain('WHSuperAdminBundle_SuperAdmin_Dashboard');
+    /**
+     * @Route("/sudo/", name="sudo_wh_dashboard")
+     *
+     * @return Response
+     */
+    public function dashboardAction()
+    {
+        $backendTranslator = $this->container->get('bk.wh.back.translator');
+        $backendTranslator->setDomain('WHSuperAdminBundle_SuperAdmin_Dashboard');
 
-		$title = $backendTranslator->trans('Dashboard');
+        $title = $backendTranslator->trans('Dashboard');
 
-		return $this->render(
-			'@WHSuperAdmin/SuperAdmin/Dashboard/dashboard.html.twig',
-			array(
-				'title'        => $title,
-				'globalConfig' => array(
-					'menus' => array(
-						'main'  => 'superAdminMenu',
-						'right' => 'superAdminMenuRight',
-					),
-				),
-			)
-		);
-	}
+        return $this->render(
+            '@WHSuperAdmin/SuperAdmin/Dashboard/dashboard.html.twig',
+            [
+                'title'        => $title,
+                'globalConfig' => [
+                    'menus' => [
+                        'main'  => 'superAdminMenu',
+                        'right' => 'superAdminMenuRight',
+                    ],
+                ],
+            ]
+        );
+    }
 
 }

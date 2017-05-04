@@ -13,14 +13,14 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
 
-	/**
-	 * @return mixed
-	 */
+    /**
+     * @return mixed
+     */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-	    $rootNode = $treeBuilder->root('wh_super_admin');
+        $rootNode = $treeBuilder->root('wh_super_admin');
 
-	    return $treeBuilder;
+        return $treeBuilder;
     }
 }
