@@ -14,7 +14,6 @@ use WH\SuperAdminBundle\Entity\MenuItem;
  */
 class Tree implements ContainerAwareInterface
 {
-
     use ContainerAwareTrait;
 
     private $indexController;
@@ -50,13 +49,13 @@ class Tree implements ContainerAwareInterface
         // Penser au cas où il peut y avoir plusieurs arguments "communs"
         $conditions = [];
         if (!empty($this->urlData)) {
-
             $keys = array_keys($this->urlData);
             $conditions = [
                 $keys[0] => $this->urlData[$keys[0]],
             ];
         }
-        unset($conditions['parent.id']);
+        unset($conditions['parent']);
+
         $entities = $entityRepository->get(
             'all',
             [
@@ -64,9 +63,7 @@ class Tree implements ContainerAwareInterface
             ]
         );
 
-        $menu = $factory->createItem(
-            'root'
-        );
+        $menu = $factory->createItem('root');
 
         $data = array_merge(
             $this->urlData,
@@ -93,16 +90,13 @@ class Tree implements ContainerAwareInterface
         );
 
         foreach ($entities as $entity) {
-
             if ($entity->getLvl() == 0) {
-
                 $menu['root']->addChild(
                     $entity->getId(),
                     $this->getNodeTree($entity)
                 );
 
                 if (count($entity->getChildren()) > 0) {
-
                     $this->treeChildren($menu['root'], $entity->getId(), $entity->getChildren());
                 }
             }
@@ -120,16 +114,13 @@ class Tree implements ContainerAwareInterface
      */
     private function treeChildren($node, $slug, $entities)
     {
-
         foreach ($entities as $entity) {
-
             $node[$slug]->addChild(
                 $entity->getId(),
                 $this->getNodeTree($entity)
             );
 
             if (count($entity->getChildren()) > 0) {
-
                 $this->treeChildren($node[$slug], $entity->getId(), $entity->getChildren());
             }
         }
@@ -147,7 +138,9 @@ class Tree implements ContainerAwareInterface
         $data = array_merge(
             $this->urlData,
             [
-                'parent.id' => $entity->getId(),
+                'parent' => [
+                    'id' => $entity->getId(),
+                ],
             ]
         );
 
